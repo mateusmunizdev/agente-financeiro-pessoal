@@ -40,18 +40,25 @@ export function useAuth() {
   }, [session]);
 
   // 🔐 LOGIN
-  async function signIn(email: string, password: string) {
+  async function signIn(email: string, password: string): Promise<void> {
+    setLoadingSession(true)
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) throw error;
-    return data;
+    if (error){
+        setLoadingSession(false)
+      throw error;
+     
+    }
+   
+  setLoadingSession(false)
+    setSession(data.session)
   }
 
   // 🆕 CADASTRO
-  async function signUp(email: string, password: string, nome: string) {
+  async function signUp(email: string, password: string, nome: string): Promise<void> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -62,8 +69,11 @@ export function useAuth() {
   },
     });
 
-    if (error) throw error;
-    return data;
+    if (error){
+       throw error;
+    }
+
+    setSession(data.session)
   }
 
   // 🚪 LOGOUT

@@ -1,15 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../services/useAuth";
-import { useState } from "react";
+
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
+import { AuthContext } from "../../context/authContext";
 
 const Login = () => {
-  const navigate = useNavigate();
-const { signIn } = useAuth();
+ const navigate = useNavigate();
+ const auth = useContext(AuthContext);
+ if (!auth) {
+    throw new Error("useAuthContext must be used within AuthProvider");
+  } 
 
+
+
+ 
+
+const login = auth.signIn;
 const [email, setEmail] = useState<string>("")
 const [password, setPassword] = useState<string>("")
-
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); 
     if(!email.trim() || !password.trim()){
@@ -18,7 +26,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     } 
 
     try {
-      await signIn(email, password);
+      await login(email, password);
     } catch (error) {
       toast.error("Falha no login. Verifique suas credenciais e tente novamente.");
       console.error("Erro ao fazer login:", error);
@@ -34,7 +42,9 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setPassword("");
   };
 
+   const loadingLogin = auth.loadingSession;
 
+   
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-sky-50 px-4">
@@ -74,9 +84,10 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
           <button
             type="submit"
-            className="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 rounded-xl transition-all duration-300"
+            disabled ={loadingLogin}
+            className={`w-full ${loadingLogin? "disabled:bg-sky-600/50 cursor-no-drop" : "enabled:bg-sky-600"}  hover:bg-sky-700 text-white font-semibold py-2 rounded-xl transition-all duration-300`}
           >
-            Entrar
+           {auth.loadingSession ? <div className="flex justify-center items-center gap-2"><div className="w-6 h-6 border-2 border-transparent border-b-white rounded-full animate-spin"></div><span>Entrando...</span></div> : <span>Entrar</span>}
           </button>
         </form>
 
