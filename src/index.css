@@ -1,0 +1,19 @@
+
+
+@import "tailwindcss";
+
+html, body{
+  min-height: 100%;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+ @apply bg-linear-to-br from-sky-50 to-sky-100 bg-no-repeat;
+}
+
+
+.active{
+  @apply bg-sky-400 text-white ;
+}
+
+
